@@ -30,7 +30,7 @@
 ## 项目结构
 
 ```text
-CNN Image Classification Project/
+cnn_image_classification_lab/
 ├── checkpoints/
 │   ├── best_mnist_cnn.pth
 │   ├── best_cifar10_cnn.pth
@@ -56,7 +56,7 @@ CNN Image Classification Project/
 └── README.md
 ```
 
-说明：`data/`、`checkpoints/` 和 `test_images/` 不会上传到 GitHub。
+说明：
 
 - `data/` 用于保存运行脚本时自动下载的数据集。
 - `checkpoints/` 用于保存训练过程中生成的模型权重文件。
@@ -146,7 +146,6 @@ datasets.MNIST(root="./data", download=True)
 datasets.CIFAR10(root="./data", download=True)
 ```
 
-由于数据集文件体积较大，且可以通过脚本自动获取，`data/` 目录不会提交到 GitHub。
 
 ## 训练模型
 
@@ -238,7 +237,7 @@ python predict_cifar10.py
 
 ## 本地图片预测
 
-本地图片不会随仓库上传，需要自己准备并放到 `test_images/` 目录下。
+本地图片需要自己准备并放到 `test_images/` 目录下。
 
 可以按下面的方式准备目录：
 
@@ -357,7 +356,6 @@ load_checkpoint
 - 项目会根据当前环境自动选择 CPU 或 CUDA。
 - 第一次运行训练脚本时会自动下载对应数据集。
 - 本地图片预测需要提前准备好模型权重文件和测试图片。
-- `data/`、`checkpoints/` 和 `test_images/` 属于本地运行产物或个人测试资源，不会上传到 GitHub。
 - `train_cifar10.py` 默认保存增强训练后的模型：`best_cifar10_aug_cnn.pth`。
 - `predict_cifar10.py` 和 `predict_local_cifar10.py` 当前默认加载：`best_cifar10_cnn.pth`。
 - 如果希望使用增强训练后的 CIFAR-10 模型，可以将预测脚本中的模型路径修改为：
