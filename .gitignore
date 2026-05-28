@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Dataset files
+data/
+
+# Model checkpoints
+checkpoints/
+
+# Local test images
+test_images/
+
+# IDE and system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
