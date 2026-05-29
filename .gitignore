@@ -8,13 +8,16 @@ venv/
 env/
 
 # Dataset files
-data/
+data/*
+!data/.gitkeep
 
 # Model checkpoints
-checkpoints/
+checkpoints/*
+!checkpoints/.gitkeep
 
 # Local test images
-test_images/
+test_images/*
+!test_images/.gitkeep
 
 # IDE and system files
 .idea/
