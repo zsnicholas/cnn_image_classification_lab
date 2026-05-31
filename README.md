@@ -11,6 +11,7 @@
 - 支持 CIFAR-10 彩色图像分类
 - 支持 CIFAR-10 数据增强训练
 - 支持 BatchNorm 和 Dropout 优化模型训练
+- 支持保存训练过程中的 Loss 和 Accuracy 曲线
 - 支持训练过程中自动保存最优模型
 - 支持加载已训练模型进行预测
 - 支持测试集随机样本预测
@@ -23,6 +24,7 @@
 - PyTorch
 - Torchvision
 - Pillow
+- Matplotlib
 - CNN
 - BatchNorm
 - Dropout
@@ -49,8 +51,11 @@ cnn_image_classification_lab/
 ├── test_images/
 │   ├── mnist_test.png
 │   └── cifar_test.jpg
+├── results/
+│   └── cifar10_bn_dropout_curves.png
 ├── utils/
 │   ├── checkpoint_utils.py
+│   ├── plot_utils.py
 │   └── train_utils.py
 ├── train_mnist.py
 ├── train_cifar10.py
@@ -67,6 +72,7 @@ cnn_image_classification_lab/
 - `data/` 用于保存运行脚本时自动下载的数据集。
 - `checkpoints/` 用于保存训练过程中生成的模型权重文件。
 - `test_images/` 用于保存本地预测时手动准备的测试图片。
+- `results/` 用于保存训练曲线等可视化结果。
 
 ## 功能说明
 
@@ -140,7 +146,7 @@ predict_local_cifar10.py
 建议使用 Python 3.9 或以上版本。
 
 ```bash
-pip install torch torchvision pillow
+pip install torch torchvision pillow matplotlib
 ```
 
 如果需要使用 GPU，请根据本机 CUDA 版本安装对应的 PyTorch 版本。
@@ -220,6 +226,12 @@ python train_cifar10_bn_dropout.py
 ```
 
 该脚本使用加入 BatchNorm 和 Dropout 的 CIFAR-10 模型，并沿用数据增强策略进行训练。
+
+训练结束后会生成 Loss 和 Accuracy 曲线图：
+
+```text
+results/cifar10_bn_dropout_curves.png
+```
 
 模型默认保存路径：
 
@@ -398,6 +410,22 @@ load_checkpoint
 恢复模型参数
 ```
 
+### `utils/plot_utils.py`
+
+封装训练曲线绘制逻辑：
+
+```text
+plot_training_curves
+```
+
+主要负责：
+
+```text
+绘制训练集和测试集 Loss 曲线
+绘制训练集和测试集 Accuracy 曲线
+保存训练过程可视化结果
+```
+
 ## 说明
 
 - 项目会根据当前环境自动选择 CPU 或 CUDA。
@@ -405,6 +433,7 @@ load_checkpoint
 - 本地图片预测需要提前准备好模型权重文件和测试图片。
 - `train_cifar10.py` 默认保存增强训练后的模型：`best_cifar10_aug_cnn.pth`。
 - `train_cifar10_bn_dropout.py` 默认保存 BatchNorm + Dropout 版本模型：`best_cifar10_bn_dropout_cnn.pth`。
+- `train_cifar10_bn_dropout.py` 会在训练结束后保存曲线图：`results/cifar10_bn_dropout_curves.png`。
 - `predict_cifar10.py` 和 `predict_local_cifar10.py` 当前默认加载：`best_cifar10_cnn.pth`。
 - 如果希望使用增强训练后的 CIFAR-10 模型，可以将预测脚本中的模型路径修改为：
 
@@ -415,7 +444,6 @@ checkpoints/best_cifar10_aug_cnn.pth
 ## 可扩展方向
 
 - 引入 ResNet 等更深层 CNN 结构
-- 增加训练日志可视化
 - 增加混淆矩阵和分类报告
 - 支持命令行参数配置训练轮数、学习率和模型路径
 - 支持更多图像分类数据集

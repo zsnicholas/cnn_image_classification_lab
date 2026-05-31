@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 from models.cifar_cnn_bn_dropout import CIFAR10CNN_BN_Dropout
 from utils.train_utils import train_one_epoch, evaluate
 from utils.checkpoint_utils import save_checkpoint
+from utils.plot_utils import plot_training_curves
 
 
 def main():
@@ -82,6 +83,11 @@ def main():
     best_test_acc = 0.0
     save_path = "checkpoints/best_cifar10_bn_dropout_cnn.pth"
 
+    train_loss_list = []
+    train_acc_list = []
+    test_loss_list = []
+    test_acc_list = []
+
     for epoch in range(epochs):
         train_loss, train_acc = train_one_epoch(
             model,
@@ -106,10 +112,23 @@ def main():
             f"Test Acc: {test_acc:.4f}"
         )
 
+        train_loss_list.append(train_loss)
+        train_acc_list.append(train_acc)
+        test_loss_list.append(test_loss)
+        test_acc_list.append(test_acc)
+
         if test_acc > best_test_acc:
             best_test_acc = test_acc
             save_checkpoint(model, save_path)
             print(f"发现更好的 BN + Dropout 模型，当前最佳 Test Acc: {best_test_acc:.4f}")
+
+    plot_training_curves(
+        train_loss_list=train_loss_list,
+        train_acc_list=train_acc_list,
+        test_loss_list=test_loss_list,
+        test_acc_list=test_acc_list,
+        save_path="results/cifar10_bn_dropout_curves.png"
+    )
 
 
 if __name__ == "__main__":

@@ -19,6 +19,10 @@ checkpoints/*
 test_images/*
 !test_images/.gitkeep
 
+# Training results
+results/*
+!results/.gitkeep
+
 # IDE and system files
 .idea/
 .vscode/
