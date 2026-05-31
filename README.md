@@ -11,6 +11,7 @@
 - 支持 CIFAR-10 彩色图像分类
 - 支持 CIFAR-10 数据增强训练
 - 支持 BatchNorm 和 Dropout 优化模型训练
+- 支持更深层 CNN 结构进行 CIFAR-10 分类
 - 支持保存训练过程中的 Loss 和 Accuracy 曲线
 - 支持训练过程中自动保存最优模型
 - 支持加载已训练模型进行预测
@@ -40,19 +41,22 @@ cnn_image_classification_lab/
 │   ├── best_mnist_cnn.pth
 │   ├── best_cifar10_cnn.pth
 │   ├── best_cifar10_aug_cnn.pth
-│   └── best_cifar10_bn_dropout_cnn.pth
+│   ├── best_cifar10_bn_dropout_cnn.pth
+│   └── best_cifar10_deep_cnn.pth
 ├── data/
 │   ├── MNIST/
 │   └── cifar-10-batches-py/
 ├── models/
 │   ├── simple_cnn.py
 │   ├── cifar_cnn.py
-│   └── cifar_cnn_bn_dropout.py
+│   ├── cifar_cnn_bn_dropout.py
+│   └── cifar_deep_cnn.py
 ├── test_images/
 │   ├── mnist_test.png
 │   └── cifar_test.jpg
 ├── results/
-│   └── cifar10_bn_dropout_curves.png
+│   ├── cifar10_bn_dropout_curves.png
+│   └── cifar10_deep_cnn_curves.png
 ├── utils/
 │   ├── checkpoint_utils.py
 │   ├── plot_utils.py
@@ -60,6 +64,7 @@ cnn_image_classification_lab/
 ├── train_mnist.py
 ├── train_cifar10.py
 ├── train_cifar10_bn_dropout.py
+├── train_cifar10_deep.py
 ├── predict_mnist.py
 ├── predict_cifar10.py
 ├── predict_local_mnist.py
@@ -105,6 +110,8 @@ predict_local_mnist.py
 
 项目同时提供了加入 BatchNorm 和 Dropout 的增强版本 `CIFAR10CNN_BN_Dropout`。该版本在卷积层后加入 BatchNorm，提高训练稳定性，并在全连接层后加入 Dropout，降低过拟合风险。
 
+项目还提供了更深层的 `CIFAR10DeepCNN`，通过多个卷积块堆叠增强特征提取能力，并结合 BatchNorm 和 Dropout 提升训练表现。
+
 CIFAR-10 类别包括：
 
 ```text
@@ -125,6 +132,7 @@ truck
 ```text
 models/cifar_cnn.py
 models/cifar_cnn_bn_dropout.py
+models/cifar_deep_cnn.py
 ```
 
 训练脚本：
@@ -132,6 +140,7 @@ models/cifar_cnn_bn_dropout.py
 ```text
 train_cifar10.py
 train_cifar10_bn_dropout.py
+train_cifar10_deep.py
 ```
 
 预测脚本：
@@ -244,6 +253,36 @@ checkpoints/best_cifar10_bn_dropout_cnn.pth
 ```text
 batch size: 64
 epochs: 10
+optimizer: Adam
+learning rate: 0.001
+loss function: CrossEntropyLoss
+```
+
+### 训练 CIFAR-10 Deep CNN 模型
+
+```bash
+python train_cifar10_deep.py
+```
+
+该脚本使用更深层的 CIFAR-10 CNN 模型，并结合 BatchNorm、Dropout 和数据增强进行训练。
+
+训练结束后会生成 Loss 和 Accuracy 曲线图：
+
+```text
+results/cifar10_deep_cnn_curves.png
+```
+
+模型默认保存路径：
+
+```text
+checkpoints/best_cifar10_deep_cnn.pth
+```
+
+默认配置：
+
+```text
+batch size: 64
+epochs: 15
 optimizer: Adam
 learning rate: 0.001
 loss function: CrossEntropyLoss
@@ -375,6 +414,28 @@ Conv2d -> BatchNorm2d -> ReLU -> MaxPool2d
 Flatten -> Linear -> ReLU -> Dropout -> Linear
 ```
 
+### `models/cifar_deep_cnn.py`
+
+定义更深层的 CIFAR-10 分类模型。
+
+网络结构：
+
+```text
+Conv2d -> BatchNorm2d -> ReLU
+Conv2d -> BatchNorm2d -> ReLU
+MaxPool2d
+
+Conv2d -> BatchNorm2d -> ReLU
+Conv2d -> BatchNorm2d -> ReLU
+MaxPool2d
+
+Conv2d -> BatchNorm2d -> ReLU
+Conv2d -> BatchNorm2d -> ReLU
+MaxPool2d
+
+Flatten -> Linear -> ReLU -> Dropout -> Linear
+```
+
 ### `utils/train_utils.py`
 
 封装训练和评估流程：
@@ -434,6 +495,8 @@ plot_training_curves
 - `train_cifar10.py` 默认保存增强训练后的模型：`best_cifar10_aug_cnn.pth`。
 - `train_cifar10_bn_dropout.py` 默认保存 BatchNorm + Dropout 版本模型：`best_cifar10_bn_dropout_cnn.pth`。
 - `train_cifar10_bn_dropout.py` 会在训练结束后保存曲线图：`results/cifar10_bn_dropout_curves.png`。
+- `train_cifar10_deep.py` 默认保存 Deep CNN 版本模型：`best_cifar10_deep_cnn.pth`。
+- `train_cifar10_deep.py` 会在训练结束后保存曲线图：`results/cifar10_deep_cnn_curves.png`。
 - `predict_cifar10.py` 和 `predict_local_cifar10.py` 当前默认加载：`best_cifar10_cnn.pth`。
 - 如果希望使用增强训练后的 CIFAR-10 模型，可以将预测脚本中的模型路径修改为：
 
@@ -443,7 +506,7 @@ checkpoints/best_cifar10_aug_cnn.pth
 
 ## 可扩展方向
 
-- 引入 ResNet 等更深层 CNN 结构
+- 引入 ResNet 等经典深度网络结构
 - 增加混淆矩阵和分类报告
 - 支持命令行参数配置训练轮数、学习率和模型路径
 - 支持更多图像分类数据集
